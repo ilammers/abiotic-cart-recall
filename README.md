@@ -65,14 +65,6 @@ Please open an issue with the scan output so the defaults can be fixed.
 - Recalled carts appear at a fixed height above you and drop to the floor.
   In tight spaces they can clip into geometry.
 
-## Roadmap
-
-- **Pack into an item.** The vanilla recovery button drops carts in a packaged
-  state. If the scan turns up the game's native `Package*`/`Pickup*`
-  function, the mod could call it, so you could carry the cart and redeploy it.
-- **Craftable recall kit.** A custom item with its own recipe and icon needs a
-  Blueprint `.pak` mod. Lua alone can't add new assets.
-- **Client support.** A client-to-server RPC so non-host players can recall.
 
 ## License
 

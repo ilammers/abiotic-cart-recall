@@ -89,6 +89,21 @@ Win64\
 
 > `dwmapi.dll` must be next to the `.exe`, not inside the `ue4ss` folder.
 
+### Linux and Steam Deck only
+
+On Windows you can skip this. Under Proton, Wine ignores the `dwmapi.dll` you
+just copied unless you tell it to use it:
+
+1. In Steam, right-click **Abiotic Factor** → **Properties** → **General**.
+2. In **Launch Options**, paste:
+
+   ```
+   WINEDLLOVERRIDES="dwmapi=n,b" %command%
+   ```
+
+The game folder on Linux is usually
+`~/.local/share/Steam/steamapps/common/AbioticFactor/AbioticFactor/Binaries/Win64`.
+
 ---
 
 ## Step 3: Install Cart Return

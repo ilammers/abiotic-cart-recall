@@ -3,7 +3,7 @@
 A [UE4SS](https://github.com/UE4SS-RE/RE-UE4SS) Lua mod for **Abiotic Factor**
 that recalls your Platform Carts to wherever you're standing.
 
-![F9 empties every cart into loot bags at your feet](docs/demo.gif)
+![Cart Return in action](docs/demo.gif)
 
 The game only lets you recover carts from the button in the Office Sector.
 This mod lets you recall them anywhere, so a base doesn't have to sit near

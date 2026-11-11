@@ -1,0 +1,20 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package mod
+        run: zip -r "CartReturn-${GITHUB_REF_NAME}.zip" CartReturn
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "CartReturn-${GITHUB_REF_NAME}.zip" --generate-notes

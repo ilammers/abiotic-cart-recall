@@ -6,8 +6,7 @@ that recalls your Platform Carts to wherever you're standing.
 ![Cart Return in action](docs/demo.gif)
 
 The game only lets you recover carts from the button in the Office Sector.
-This mod lets you recall them anywhere, so a base doesn't have to sit near
-that button.
+This mod lets you recall them anywhere, allowing you to base wherever in the facility.
 
 The cart actor itself is moved, so everything in its inventory comes with it.
 

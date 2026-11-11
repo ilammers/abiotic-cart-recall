@@ -36,7 +36,9 @@ Quick version:
    (`Binaries\Win64`, or `Binaries\WinGDK` for Game Pass).
 2. Download `CartReturn-v*.zip` from [Releases](../../releases) and extract the
    `CartReturn` folder into `ue4ss\Mods\`.
-3. Launch the game. `ue4ss\UE4SS.log` should contain `[CartReturn] v1.2.0 loaded.`
+3. **Linux / Steam Deck only:** set the game's Steam launch options to
+   `WINEDLLOVERRIDES="dwmapi=n,b" %command%`, or Proton won't load UE4SS.
+4. Launch the game. `ue4ss\UE4SS.log` should contain `[CartReturn] v1.2.0 loaded.`
    (The UE4SS console is off by default in AF-UE4SS.)
 
 ## Troubleshooting

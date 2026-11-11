@@ -10,8 +10,7 @@ This mod lets you recall them anywhere, allowing you to base wherever in the fac
 
 The cart actor itself is moved, so everything in its inventory comes with it.
 
-> **Status:** untested in-game. The cart class name is guessed (see
-> [Troubleshooting](#troubleshooting)). Reports and scan output are welcome.
+
 
 ## Controls
 

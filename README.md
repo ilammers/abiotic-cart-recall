@@ -19,6 +19,7 @@ The cart actor itself is moved, so everything in its inventory comes with it.
 | `F6` | Recall the nearest cart to just in front of you |
 | `F7` | Recall every loaded cart, lined up in front of you |
 | `F8` | Scan: print cart classes and related game functions to `UE4SS.log` |
+| `F9` | Empty every cart into loot bags at your feet, using the game's own recall. The carts go back to their spawn, like with the security booth button. |
 
 Keys and placement are configurable at the top of
 [`CartReturn/Scripts/main.lua`](CartReturn/Scripts/main.lua).
@@ -35,7 +36,7 @@ Quick version:
    (`Binaries\Win64`, or `Binaries\WinGDK` for Game Pass).
 2. Download `CartReturn-v*.zip` from [Releases](../../releases) and extract the
    `CartReturn` folder into `ue4ss\Mods\`.
-3. Launch the game. `ue4ss\UE4SS.log` should contain `[CartReturn] v1.1.0 loaded.`
+3. Launch the game. `ue4ss\UE4SS.log` should contain `[CartReturn] v1.2.0 loaded.`
    (The UE4SS console is off by default in AF-UE4SS.)
 
 ## Troubleshooting
@@ -62,6 +63,8 @@ Please open an issue with the scan output so the defaults can be fixed.
 - **Multiplayer:** moving world actors needs server authority. Single-player
   and the host work. A client gets a warning and the move may not replicate,
   so the host should do the recall.
+- `F9` uses the game's recall button, so that button has to be loaded (you
+  may need to be in or near the Office Sector).
 - Recalled carts appear at a fixed height above you and drop to the floor.
   In tight spaces they can clip into geometry.
 

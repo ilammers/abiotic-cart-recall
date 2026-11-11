@@ -8,11 +8,13 @@
         F6  recall the nearest cart
         F7  recall every loaded cart
         F8  scan: log cart classes and candidate native functions
+        F9  empty every cart into loot bags at your feet, using the game's
+            own recall (carts go back to their spawn, as with the button)
 ]]
 
 local UEHelpers = require("UEHelpers")
 
-local VERSION = "1.1.0"
+local VERSION = "1.2.0"
 local TAG = "[CartReturn]"
 
 --------------------------------------------------------------------- config --
@@ -22,6 +24,16 @@ local CONFIG = {
     KEY_RECALL_NEAREST = "F6",
     KEY_RECALL_ALL     = "F7",
     KEY_SCAN           = "F8",
+    KEY_EMPTY_ALL      = "F9",
+
+    -- The game's cart recall (security booth button) and the cart vehicles it takes.
+    RECALL_BUTTON_CLASS = "CartRecallButton_C",
+    CART_VEHICLE_CLASS  = "MoveableCart_ParentBP_C",
+
+    -- The recall drops bags at the button's LootLocation marker. The mod moves
+    -- the marker to your feet, then puts it back after this many milliseconds.
+    LOOT_RESTORE_DELAY_MS = 5000,
+    LOOT_FORWARD_OFFSET   = 60.0, -- bags land this far in front of your feet
 
     -- Base class of all deployables. Searched first, then filtered by CART_MATCH.
     DEPLOYABLE_PARENT = "AbioticDeployed_ParentBP_C",
@@ -51,7 +63,7 @@ local CONFIG = {
 -------------------------------------------------------------------- helpers --
 
 local function log(fmt, ...)
-    print(TAG .. " " .. string.format(fmt, ...))
+    print(TAG .. " " .. string.format(fmt, ...) .. "\n")
 end
 
 -- Calls fn, returning its result or nil if it raised.
@@ -218,6 +230,86 @@ local function recallCarts(nearestOnly)
     log("Recalled %d of %d cart(s).", moved, #carts)
 end
 
+local function copyVector(v)
+    return { X = v.X, Y = v.Y, Z = v.Z }
+end
+
+local function feetLocation(pawn)
+    local loc = copyVector(pawn:K2_GetActorLocation())
+    local halfHeight = try(function()
+        return pawn.CapsuleComponent:GetScaledCapsuleHalfHeight()
+    end) or 90.0
+    local yaw = math.rad(pawn:K2_GetActorRotation().Yaw)
+    loc.X = loc.X + math.cos(yaw) * CONFIG.LOOT_FORWARD_OFFSET
+    loc.Y = loc.Y + math.sin(yaw) * CONFIG.LOOT_FORWARD_OFFSET
+    loc.Z = loc.Z - halfHeight + 20.0
+    return loc
+end
+
+local function firstValid(objects)
+    for _, obj in ipairs(objects) do
+        if isValid(obj) then return obj end
+    end
+    return nil
+end
+
+-- Where the recall button's loot marker was before we moved it. Set while a
+-- restore is pending, so pressing the key twice doesn't save our own location.
+local savedLoot = nil
+
+local function emptyCartsAtFeet()
+    local pawn = getPawn()
+    if not pawn then
+        log("No player pawn; load into a game first.")
+        return
+    end
+
+    local button = firstValid(findAllOf(CONFIG.RECALL_BUTTON_CLASS))
+    if not button then
+        log("The game's cart recall button isn't loaded. Move closer to the Office Sector and try again.")
+        return
+    end
+    local marker = try(function() return button.LootLocation end)
+    if not isValid(marker) then
+        log("Recall button has no LootLocation; the game may have changed.")
+        return
+    end
+
+    local carts = {}
+    for _, cart in ipairs(findAllOf(CONFIG.CART_VEHICLE_CLASS)) do
+        if isValid(cart) and not try(function() return cart.PendingDestroy end) then
+            carts[#carts + 1] = cart
+        end
+    end
+    if #carts == 0 then
+        log("No carts found.")
+        return
+    end
+
+    if not savedLoot then
+        savedLoot = { marker = marker, location = copyVector(marker:K2_GetComponentLocation()) }
+    end
+    marker:K2_SetWorldLocation(feetLocation(pawn), false, {}, true)
+
+    local recalled = 0
+    for _, cart in ipairs(carts) do
+        local ok = pcall(function() button:TryRecallCart(cart) end)
+        if ok then recalled = recalled + 1 else log("Recall failed for %s.", classNameOf(cart)) end
+    end
+    log("Recalled %d of %d cart(s); contents dropped at your feet.", recalled, #carts)
+
+    -- The game may spawn bags a little later, so leave the marker at your
+    -- feet for a few seconds before putting it back.
+    ExecuteWithDelay(CONFIG.LOOT_RESTORE_DELAY_MS, function()
+        ExecuteInGameThread(function()
+            if savedLoot and isValid(savedLoot.marker) then
+                savedLoot.marker:K2_SetWorldLocation(savedLoot.location, false, {}, true)
+            end
+            savedLoot = nil
+        end)
+    end)
+end
+
 -- Logs the class chain of `cls` up to Actor, with any functions matching PROBE_FUNCS.
 local function probeClassChain(cls)
     local depth = 0
@@ -295,6 +387,7 @@ end
 bind(CONFIG.KEY_RECALL_NEAREST, function() recallCarts(true) end)
 bind(CONFIG.KEY_RECALL_ALL, function() recallCarts(false) end)
 bind(CONFIG.KEY_SCAN, scan)
+bind(CONFIG.KEY_EMPTY_ALL, emptyCartsAtFeet)
 
-log("v%s loaded. %s: nearest cart, %s: all carts, %s: scan.",
-    VERSION, CONFIG.KEY_RECALL_NEAREST, CONFIG.KEY_RECALL_ALL, CONFIG.KEY_SCAN)
+log("v%s loaded. %s: nearest cart, %s: all carts, %s: scan, %s: empty carts at feet.",
+    VERSION, CONFIG.KEY_RECALL_NEAREST, CONFIG.KEY_RECALL_ALL, CONFIG.KEY_SCAN, CONFIG.KEY_EMPTY_ALL)

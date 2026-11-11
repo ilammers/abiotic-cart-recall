@@ -130,7 +130,7 @@ inner `CartReturn` up one level.
 4. Press **Ctrl+F** and search for **`CartReturn`**. You should find a line like:
 
    ```
-   [CartReturn] v1.1.0 loaded. F6: nearest cart, F7: all carts, F8: scan.
+   [CartReturn] v1.2.0 loaded. F6: nearest cart, F7: all carts, F8: scan, F9: empty carts at feet.
    ```
 
 If it's there, the mod is working.
@@ -146,6 +146,7 @@ In-game, while in a world:
 | **F6** | Brings the nearest Platform Cart to just in front of you |
 | **F7** | Brings **all** your Platform Carts, lined up in front of you |
 | **F8** | Diagnostic scan. Only needed if something isn't working |
+| **F9** | Empties **all** your carts into loot bags at your feet, the same way the game's recall button does. The empty carts go back to where they spawn. |
 
 Whatever is inside a cart stays inside it.
 
